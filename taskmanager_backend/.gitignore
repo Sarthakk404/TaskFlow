@@ -1,8 +1,35 @@
+# Python / Django
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
 db.sqlite3
+db.sqlite3-journal
+.python-version
+
+# Environments
+.venv/
 venv/
+ENV/
+env/
 .env
-*.log
+.env.example  # Only if you want to keep the template but ignore the local one
+
+# Django Media/Static
+media/
 staticfiles/
+*.log
+
+# Node / Frontend
+node_modules/
+dist/
+build/
+.eslintcache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# System/IDE
+.vscode/
+.idea/
+.DS_Store

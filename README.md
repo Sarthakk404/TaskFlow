@@ -1,154 +1,237 @@
-# TaskFlow — Full Stack Task Manager
+<div align="center">
 
-A full-stack task management web app built with **React** (frontend) and **Django REST Framework** (backend).
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=200&section=header&text=TaskFlow&fontSize=80&fontAlignY=35&desc=Full-Stack%20Task%20Manager%20%7C%20React%20%2B%20Django%20%2B%20PostgreSQL&descAlignY=60&descAlign=50&fontColor=fff" />
 
----
+**Organise. Prioritise. Deliver.**
+*A sleek, full-stack task management app with real-time status tracking, search, filtering, pagination, and authentication — built with React + Django REST Framework + Neon PostgreSQL.*
 
-## Features
+### ⚡ Built for the Modern Developer Workflow
 
-- ✅ Create, edit, delete, and view tasks
-- 🏷️ Task statuses: Pending / In Progress / Completed
-- 🔍 Search tasks by title or description
-- 🔽 Filter tasks by status
-- 📄 Pagination (10 tasks per page)
-- 🔐 User authentication (register / login / logout)
-- 👤 Guest mode (no login required)
-- 📱 Responsive UI
+<p align="center">
+  <img src="https://img.shields.io/badge/Frontend-React%20%7C%20Vite-black?style=for-the-badge&logo=react&logoColor=61DAFB" />
+  <img src="https://img.shields.io/badge/Backend-Django%20REST-092E20?style=for-the-badge&logo=django&logoColor=white" />
+  <img src="https://img.shields.io/badge/Database-Neon%20PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" />
+  <img src="https://img.shields.io/badge/Auth-Session%20Based-ff6b6b?style=for-the-badge&logo=shield&logoColor=white" />
+  <img src="https://img.shields.io/badge/Deploy-Render%20%2B%20Vercel-000?style=for-the-badge&logo=vercel&logoColor=white" />
+</p>
 
----
-
-## Tech Stack
-
-| Layer     | Technology                     |
-|-----------|-------------------------------|
-| Frontend  | React 18, Axios                |
-| Backend   | Django 4, Django REST Framework|
-| Database  | SQLite (dev) / PostgreSQL (prod)|
-| Auth      | Django Session Authentication  |
+</div>
 
 ---
 
-## Project Structure
+## ✨ Features
+
+- ✅ **Full CRUD** — Create, edit, delete, and view tasks
+- 🏷️ **Status Tracking** — Pending / In Progress / Completed (click to cycle)
+- 🔍 **Search & Filter** — Live search by title/description, filter by status
+- 📄 **Pagination** — 10 tasks per page
+- 🔐 **Authentication** — Register, login, logout + guest mode
+- 📱 **Responsive UI** — Works on mobile and desktop
+
+---
+
+## 🏗️ Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| **Frontend** | React 18, Vite, Axios |
+| **Backend** | Django 4.2, Django REST Framework |
+| **Database** | Neon PostgreSQL (via dj-database-url) |
+| **Auth** | Django Session Authentication |
+| **Deployment** | Render (backend) + Vercel (frontend) |
+
+---
+
+## 📁 Project Structure
 
 ```
 taskflow/
-├── taskmanager_backend/     # Django backend
-│   ├── tasks/               # Tasks app (models, views, serializers, urls)
-│   ├── taskmanager_backend/ # Django settings and root urls
-│   ├── manage.py
-│   └── requirements.txt
+├── taskmanager_backend/       # Django backend
+│   ├── tasks/                 # Tasks app (models, views, serializers, urls)
+│   ├── taskmanager_backend/   # Settings, root URLs
+│   ├── .env.example           # Environment variable template
+│   ├── requirements.txt
+│   └── manage.py
 │
-└── taskmanager_frontend/    # React frontend
+└── taskmanager_frontend/      # React + Vite frontend
     ├── src/
-    │   ├── App.js           # Main component
-    │   ├── App.css          # Styles
-    │   └── api.js           # Axios API calls
+    │   ├── App.jsx            # Main component
+    │   ├── App.css            # Styles
+    │   └── api.js             # Axios API calls
+    ├── vite.config.js
     └── package.json
 ```
 
 ---
 
-## Local Setup
+## 🚀 Local Setup
 
-### Backend (Django)
+### Prerequisites
+- **Python 3.11+** → https://www.python.org/downloads/release/python-3119/
+- **Node.js 18+** → https://nodejs.org
+- **Neon account** → https://neon.tech (free tier works)
+
+---
+
+### 1. Clone the repo
+
+```bash
+git clone https://github.com/yourusername/taskflow.git
+cd taskflow
+```
+
+### 2. Backend setup
 
 ```bash
 cd taskmanager_backend
 
 # Create virtual environment
 python -m venv venv
-source venv/bin/activate   # Windows: venv\Scripts\activate
+
+# Activate
+# Windows:
+venv\Scripts\activate
+# Mac/Linux:
+source venv/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
+```
 
-# Run migrations
+### 3. Configure environment
+
+```bash
+# Copy the example env file
+cp .env.example .env
+```
+
+Edit `.env` with your values:
+
+```env
+SECRET_KEY=your-long-random-secret-key
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
+DATABASE_URL=postgresql://user:password@ep-xxxx.us-east-2.aws.neon.tech/neondb?sslmode=require
+CORS_ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000
+SESSION_COOKIE_SECURE=False
+CSRF_COOKIE_SECURE=False
+```
+
+> Get your `DATABASE_URL` from: **Neon Dashboard → Your Project → Connection Details → Connection string**
+
+### 4. Run migrations & start backend
+
+```bash
 python manage.py migrate
-
-# (Optional) Create a superuser for Django admin
-python manage.py createsuperuser
-
-# Start server
 python manage.py runserver
 ```
 
-Backend runs at: `http://localhost:8000`
+Backend live at → `http://localhost:8000`
 
-### Frontend (React)
+---
+
+### 5. Frontend setup
 
 ```bash
+# In a new terminal
 cd taskmanager_frontend
 
-# Install dependencies
 npm install
-
-# Start development server
-npm start
+npm run dev
 ```
 
-Frontend runs at: `http://localhost:3000`
+Frontend live at → `http://localhost:5173`
 
-> The React app proxies API calls to `http://localhost:8000` via the `proxy` field in `package.json`.
-
----
-
-## API Endpoints
-
-| Method | Endpoint               | Description         |
-|--------|------------------------|---------------------|
-| GET    | /api/tasks/            | List all tasks      |
-| POST   | /api/tasks/            | Create a task       |
-| GET    | /api/tasks/{id}/       | Get task detail     |
-| PATCH  | /api/tasks/{id}/       | Update a task       |
-| DELETE | /api/tasks/{id}/       | Delete a task       |
-| POST   | /api/auth/register/    | Register user       |
-| POST   | /api/auth/login/       | Login               |
-| POST   | /api/auth/logout/      | Logout              |
-| GET    | /api/auth/me/          | Current user info   |
-
-### Query Parameters
-
-- `?search=keyword` — Search by title or description
-- `?status=pending|in_progress|completed` — Filter by status
-- `?page=1` — Pagination
+> The Vite proxy automatically forwards `/api` calls to Django on port 8000 — no extra config needed.
 
 ---
 
-## Deployment
+## 📡 API Endpoints
 
-### Backend (Render / Railway / Heroku)
-
-1. Add `gunicorn` and `psycopg2-binary` to requirements
-2. Set environment variables: `SECRET_KEY`, `DATABASE_URL`, `ALLOWED_HOSTS`
-3. Update `CORS_ALLOWED_ORIGINS` with frontend URL
-4. Run: `gunicorn taskmanager_backend.wsgi`
-
-### Frontend (Vercel / Netlify)
-
-1. Set `REACT_APP_API_URL` environment variable to your backend URL
-2. Run: `npm run build`
-3. Deploy the `build/` folder
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/tasks/` | List tasks (supports `?search=` `?status=` `?page=`) |
+| `POST` | `/api/tasks/` | Create a task |
+| `PATCH` | `/api/tasks/{id}/` | Update a task |
+| `DELETE` | `/api/tasks/{id}/` | Delete a task |
+| `POST` | `/api/auth/register/` | Register new user |
+| `POST` | `/api/auth/login/` | Login |
+| `POST` | `/api/auth/logout/` | Logout |
+| `GET` | `/api/auth/me/` | Current user info |
 
 ---
 
-## Task Model
+## ☁️ Deployment
+
+### Backend → Render
+
+1. Push `taskmanager_backend/` to GitHub
+2. Go to [render.com](https://render.com) → **New Web Service**
+3. Connect your GitHub repo
+4. Set these values:
+   - **Root Directory:** `taskmanager_backend`
+   - **Build Command:** `pip install -r requirements.txt`
+   - **Start Command:** `gunicorn taskmanager_backend.wsgi`
+5. Add environment variables in Render dashboard:
+
+```env
+SECRET_KEY=your-long-random-secret-key
+DEBUG=False
+ALLOWED_HOSTS=your-app.onrender.com
+DATABASE_URL=postgresql://user:password@ep-xxxx.neon.tech/neondb?sslmode=require
+CORS_ALLOWED_ORIGINS=https://your-frontend.vercel.app
+SESSION_COOKIE_SECURE=True
+CSRF_COOKIE_SECURE=True
+```
+
+6. Click **Deploy** — Render will install deps and start the server
+7. Run migrations via Render **Shell** tab:
+```bash
+python manage.py migrate
+```
+
+---
+
+### Frontend → Vercel
+
+1. Push `taskmanager_frontend/` to GitHub
+2. Go to [vercel.com](https://vercel.com) → **New Project**
+3. Import your repo
+4. Set **Root Directory** to `taskmanager_frontend`
+5. Add environment variable:
+
+```env
+VITE_API_URL=https://your-backend.onrender.com/api
+```
+
+6. Click **Deploy** ✅
+
+---
+
+### After Deployment — Update CORS
+
+Go back to Render → Environment Variables → update:
+```env
+CORS_ALLOWED_ORIGINS=https://your-actual-frontend.vercel.app
+```
+
+---
+
+## 🗂️ Task Model
 
 ```python
 class Task(models.Model):
-    title       = CharField(max_length=255, required)
+    title       = CharField(max_length=255)   # required
     description = TextField(blank=True)
     status      = CharField(choices=['pending', 'in_progress', 'completed'])
     created_at  = DateTimeField(auto_now_add=True)
     updated_at  = DateTimeField(auto_now=True)
-    user        = ForeignKey(User, on_delete=CASCADE, nullable)
+    user        = ForeignKey(User, nullable=True)
 ```
 
 ---
 
-## Screenshots
-
-The app features a dark sidebar layout with:
-- Sidebar navigation with task counts per status
-- Card grid for tasks with status badges
-- Modal forms for creating/editing tasks
-- Search bar with live filtering
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=100&section=footer" />
+  <p>Built with ❤️ by <a href="https://github.com/yourusername">Sarthak</a></p>
+</div>

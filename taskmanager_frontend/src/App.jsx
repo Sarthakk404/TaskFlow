@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import * as api from './api'
 import './App.css'
 
@@ -108,6 +108,16 @@ function TaskModal({ task, onSave, onClose }) {
 function TaskCard({ task, onEdit, onDelete, onStatus }) {
   const s = STATUS[task.status]
   const [deleting, setDeleting] = useState(false)
+  const cardRef = useRef(null)
+
+  const handleMouseMove = e => {
+    if (!cardRef.current) return
+    const rect = cardRef.current.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+    cardRef.current.style.setProperty('--mouse-x', `${x}px`)
+    cardRef.current.style.setProperty('--mouse-y', `${y}px`)
+  }
 
   const del = async () => {
     if (!confirm('Delete this task?')) return
@@ -115,9 +125,13 @@ function TaskCard({ task, onEdit, onDelete, onStatus }) {
   }
 
   return (
-    <div className={'card' + (deleting ? ' fading' : '')}>
+    <div 
+      ref={cardRef} 
+      onMouseMove={handleMouseMove}
+      className={'card' + (deleting ? ' fading' : '')}
+    >
       <div className="card-top">
-        <button className="status-tag" style={{ background: s.bg, color: s.color }}
+        <button className="status-tag" style={{ background: s.bg, color: s.color, borderColor: s.color }}
           onClick={() => onStatus(task.id, NEXT[task.status])} title="Click to advance">
           {s.dot} {s.label}
         </button>
@@ -156,8 +170,8 @@ export default function App() {
       .catch(()  => setUser(null))
   }, [])
 
-  const load = useCallback(async () => {
-    setBusy(true)
+  const load = useCallback(async (showSpinner = false) => {
+    if (showSpinner) setBusy(true)
     try {
       const params = { page }
       if (search) params.search = search
@@ -170,7 +184,7 @@ export default function App() {
     finally { setBusy(false) }
   }, [search, filter, page])
 
-  useEffect(() => { if (user !== undefined) load() }, [user, load])
+  useEffect(() => { if (user !== undefined) load(true) }, [user, load])
 
   const save = async (form) => {
     if (modal?.id) await api.updateTask(modal.id, form)
@@ -185,7 +199,12 @@ export default function App() {
     completed:   tasks.filter(t => t.status === 'completed').length,
   }
 
-  if (user === undefined) return <div className="splash"><span className="spin" />Loading…</div>
+  if (user === undefined) return (
+    <div className="splash-fullscreen">
+      <div className="splash-logo">✦ TaskFlow</div>
+      <div className="splash-loader"></div>
+    </div>
+  )
   if (auth) return <AuthModal onAuth={u => { setUser(u); setAuth(false) }} />
 
   return (
@@ -229,8 +248,10 @@ export default function App() {
         </div>
 
         {/* Task list */}
-        {busy
-          ? <div className="splash inline"><span className="spin" />Loading…</div>
+        {busy && tasks.length === 0
+          ? <div className="splash inline">
+              <div className="splash-loader sm"></div>
+            </div>
           : tasks.length === 0
             ? <div className="empty">
                 <div className="empty-icon">◎</div>

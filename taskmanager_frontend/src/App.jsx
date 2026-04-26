@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import * as api from './api'
 import './App.css'
 
@@ -160,9 +160,15 @@ export default function App() {
   const [busy,   setBusy]   = useState(true)
   const [modal,  setModal]  = useState(null)
   const [search, setSearch] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
   const [filter, setFilter] = useState('')
   const [page,   setPage]   = useState(1)
   const [total,  setTotal]  = useState(1)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 300)
+    return () => clearTimeout(timer)
+  }, [search])
 
   useEffect(() => {
     api.getMe()
@@ -174,7 +180,7 @@ export default function App() {
     if (showSpinner) setBusy(true)
     try {
       const params = { page }
-      if (search) params.search = search
+      if (debouncedSearch) params.search = debouncedSearch
       if (filter) params.status = filter
       const r = await api.getTasks(params)
       const d = r.data
@@ -182,9 +188,9 @@ export default function App() {
       setTotal(d.count ? Math.ceil(d.count / 10) : 1)
     } catch { setTasks([]) }
     finally { setBusy(false) }
-  }, [search, filter, page])
+  }, [debouncedSearch, filter, page])
 
-  useEffect(() => { if (user !== undefined) load(true) }, [user, load])
+  useEffect(() => { load(true) }, [load])
 
   const save = async (form) => {
     if (modal?.id) await api.updateTask(modal.id, form)
@@ -192,12 +198,12 @@ export default function App() {
     load()
   }
 
-  const counts = {
+  const counts = useMemo(() => ({
     '': tasks.length,
     pending:     tasks.filter(t => t.status === 'pending').length,
     in_progress: tasks.filter(t => t.status === 'in_progress').length,
     completed:   tasks.filter(t => t.status === 'completed').length,
-  }
+  }), [tasks])
 
   if (user === undefined) return (
     <div className="splash-fullscreen">
@@ -205,7 +211,7 @@ export default function App() {
       <div className="splash-loader"></div>
     </div>
   )
-  if (auth) return <AuthModal onAuth={u => { setUser(u); setAuth(false) }} />
+  if (auth) return <AuthModal onAuth={u => { setUser(u); setAuth(false); load(true); }} />
 
   return (
     <div className="layout">
@@ -225,7 +231,7 @@ export default function App() {
         <div className="sidebar-foot">
           {user
             ? <><div className="user-row"><div className="avatar">{user.username[0].toUpperCase()}</div><span>{user.username}</span></div>
-                <button className="btn-ghost full sm" onClick={() => api.logout().then(() => setUser(null))}>Sign out</button></>
+                <button className="btn-ghost full sm" onClick={() => api.logout().then(() => { setUser(null); load(true); })}>Sign out</button></>
             : <button className="btn-primary full sm" onClick={() => setAuth(true)}>Sign in</button>}
         </div>
       </aside>
